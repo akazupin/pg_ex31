@@ -7,6 +7,7 @@ public class BaseService {
 	public int getBASIC_MONTHLY_CHARGE() {
 		return BASIC_MONTHLY_CHARGE;
 	}
+
 	public int getBASIC_CALL_CHARGE_PER_MINUTES() {
 		return BASIC_CALL_CHARGE_PER_MINUTES;
 	}
