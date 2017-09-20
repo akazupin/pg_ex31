@@ -15,7 +15,7 @@ public class CalcMonthlyFee {
 		List<Phone> phoneList;
 
 		try {
-			phoneList = ImportUtil.readLog();
+			phoneList = ImportUtil.readLog(Constants.SOURCE_FILE_PATH);
 		} catch (IOException e) {
 			System.out.println("ファイル読み込みエラーが発生しました");
 			e.printStackTrace();
@@ -25,10 +25,11 @@ public class CalcMonthlyFee {
 		System.out.println(Constants.DEST_FILE_PATH + "への書き込みを開始します");
 
 		try {
-			ExportUtil.writeFee(phoneList);
+			ExportUtil.writeFee(phoneList , Constants.DEST_FILE_PATH);
 		} catch (IOException e) {
 			System.out.println("ファイル書き込みエラーが発生しました");
 			e.printStackTrace();
+			return;
 		}
 
 		System.out.println("処理が完了しました");

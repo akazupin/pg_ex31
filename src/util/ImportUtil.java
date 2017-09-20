@@ -14,8 +14,8 @@ import phone.Phone;
 
 public class ImportUtil {
 
-	public static List<Phone> readLog() throws IOException {
-		File file = new File(Constants.SOURCE_FILE_PATH);
+	public static List<Phone> readLog(String inputFilePath) throws IOException {
+		File file = new File(inputFilePath);
 		FileReader filereader = new FileReader(file);
 		BufferedReader br = new BufferedReader(filereader);
 		String lineStr = br.readLine();

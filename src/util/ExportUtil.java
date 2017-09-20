@@ -12,9 +12,9 @@ import phone.Phone;
 
 public class ExportUtil {
 
-	public static void writeFee(List<Phone> phoneList) throws IOException {
+	public static void writeFee(List<Phone> phoneList, String exportFilePath) throws IOException {
 
-		File file = new File(Constants.DEST_FILE_PATH);
+		File file = new File(exportFilePath);
 		FileWriter filewriter = new FileWriter(file);
 		BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
 		PrintWriter printWriter = new PrintWriter(bufferedWriter);
