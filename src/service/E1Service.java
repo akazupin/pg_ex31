@@ -8,8 +8,8 @@ import phone.Call;
 
 public class E1Service extends OptionService {
 
-	public E1Service() {
-		setADD_BASIC_FEE(Constants.ADD_BASIC_FEE_E1);
+	public int changeMonthlyBasicFee(int monthlyBasicFee) {
+		return monthlyBasicFee + Constants.ADD_BASIC_FEE_E1;
 	}
 
 	// 割引後の価格を返す

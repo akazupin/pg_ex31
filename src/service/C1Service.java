@@ -12,11 +12,14 @@ public class C1Service extends OptionService {
 
 	public C1Service(String phoneNumber) {
 		availablePhoneNumbers.add(phoneNumber);
-		setADD_BASIC_FEE(Constants.ADD_BASIC_FEE_C1);
 	}
 
 	public void setAvailablePhoneNumber(String phoneNumber) {
 		availablePhoneNumbers.add(phoneNumber);
+	}
+
+	public int changeMonthlyBasicFee(int monthlyBasicFee) {
+		return monthlyBasicFee + Constants.ADD_BASIC_FEE_C1;
 	}
 
 	public int changeCallFeePerMinutes(int callFeePerMinutes, Call call) {

@@ -10,18 +10,22 @@ import java.util.Date;
 import java.util.List;
 
 import constants.Constants;
+import phone.Call;
 import phone.Phone;
+import service.C1Service;
+import service.E1Service;
 
 public class ImportUtil {
 
 	public static List<Phone> readLog(String inputFilePath) throws IOException {
+
+		List<Phone> phoneList = new ArrayList<Phone>();
+		Phone phone = null;
+
 		File file = new File(inputFilePath);
 		FileReader filereader = new FileReader(file);
 		BufferedReader br = new BufferedReader(filereader);
 		String lineStr = br.readLine();
-
-		List<Phone> phoneList = new ArrayList<Phone>();
-		Phone phone = null;
 
 		while (lineStr != null) {
 			String lineComponent[] = lineStr.split(" ", 0);
@@ -32,30 +36,11 @@ public class ImportUtil {
 				break;
 
 			case Constants.SOURCE_OPTION_SERVICE_INFO_HEADER:
-				if (phone == null) {
-					break;
-				}
-				if (lineComponent[1].equals(Constants.SERVICE_NAME_C1)) {
-					phone.setC1Service(lineComponent[2]);
-				}
-				if (lineComponent[1].equals(Constants.SERVICE_NAME_E1)) {
-					phone.setE1Service();
-				}
+				phone = setService(phone, lineComponent);
 				break;
 
 			case Constants.SOURCE_CALL_LOG_HEADER:
-				if (phone == null) {
-					break;
-				}
-				Date callDate;
-				try {
-					callDate = Constants.timeFormat.parse(lineComponent[1] + " " + lineComponent[2]);
-				} catch (ParseException e) {
-					e.printStackTrace();
-					break;
-				}
-				int callTime = Integer.parseInt(lineComponent[3]);
-				phone.setCall(callDate, callTime, lineComponent[4]);
+				phone = setCall(phone, lineComponent);
 				break;
 
 			case Constants.SOURCE_DELIMITER_HEADER:
@@ -68,10 +53,56 @@ public class ImportUtil {
 			default:
 				break;
 			}
-
 			lineStr = br.readLine();
 		}
 		br.close();
 		return phoneList;
+	}
+
+	private static Phone setService(Phone phone, String[] lineComponent) {
+		if (phone == null) {
+			return null;
+		}
+
+		String serviceName = lineComponent[1];
+
+		switch (serviceName) {
+		case Constants.SERVICE_NAME_C1:
+			C1Service c1Service = (C1Service) phone.getOptionService(serviceName);
+			if (c1Service == null) {
+				phone.setOptionService(serviceName,  new C1Service(lineComponent[2]));
+				return phone;
+			}
+			c1Service.setAvailablePhoneNumber(lineComponent[2]);
+			phone.setOptionService(serviceName, c1Service);
+			return phone;
+
+		case Constants.SERVICE_NAME_E1:
+			phone.setOptionService(serviceName, new E1Service());
+			return phone;
+
+		default:
+			return phone;
+		}
+
+	}
+
+	private static Phone setCall(Phone phone, String[] lineComponent) {
+
+		if (phone == null) {
+			return null;
+		}
+
+		Date callDate;
+		try {
+			callDate = Constants.timeFormat.parse(lineComponent[1] + " " + lineComponent[2]);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return phone;
+		}
+
+		int callTime = Integer.parseInt(lineComponent[3]);
+		phone.addCall(new Call(callDate, callTime, lineComponent[4]));
+		return phone;
 	}
 }

@@ -1,7 +1,6 @@
 package phone;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,7 @@ public class Phone {
 	private String phoneNumber;
 	private BaseService baseService;
 	private HashMap<String, OptionService> optionServiceList = new HashMap<String, OptionService>();
-	private List<Call> calls = new ArrayList<>();
+	private List<Call> callList = new ArrayList<>();
 
 	private int monthlyBasicFee;
 	private int monthlyCallFee;
@@ -25,6 +24,7 @@ public class Phone {
 		baseService = new BaseService();
 		setPhoneNumber(phoneNumber);
 	}
+
 
 	public void setC1Service(String phoneNumber) {
 		C1Service c1Service = (C1Service) optionServiceList.get(Constants.SERVICE_NAME_C1);
@@ -39,8 +39,16 @@ public class Phone {
 		optionServiceList.put(Constants.SERVICE_NAME_E1, new E1Service());
 	}
 
-	public void setCall(Date callDate, int callTime, String targetPhoneNumber) {
-		calls.add(new Call(callDate, callTime, targetPhoneNumber));
+	public void setOptionService(String serviceName, OptionService optionService){
+		optionServiceList.put(serviceName,optionService);
+	}
+
+	public OptionService getOptionService(String serviceName){
+		return optionServiceList.get(serviceName);
+	}
+
+	public void addCall(Call call) {
+		callList.add(call);
 	}
 
 	private void culcMonthlyBasicFee() {
@@ -52,7 +60,7 @@ public class Phone {
 
 	private void culcMonthlyCallFee() {
 		monthlyCallFee = 0;
-		for (Call call : calls) {
+		for (Call call : callList) {
 			int callFeePerMinutes = baseService.getBASIC_CALL_CHARGE_PER_MINUTES();
 
 			if (optionServiceList.get(Constants.SERVICE_NAME_E1) != null) {
