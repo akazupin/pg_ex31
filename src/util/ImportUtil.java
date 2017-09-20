@@ -40,7 +40,7 @@ public class ImportUtil {
 				break;
 
 			case Constants.SOURCE_CALL_LOG_HEADER:
-				phone = setCall(phone, lineComponent);
+				phone = setCall(phone, lineComponent[1], lineComponent[2], lineComponent[3], lineComponent[4]);
 				break;
 
 			case Constants.SOURCE_DELIMITER_HEADER:
@@ -70,7 +70,7 @@ public class ImportUtil {
 		case Constants.SERVICE_NAME_C1:
 			C1Service c1Service = (C1Service) phone.getOptionService(serviceName);
 			if (c1Service == null) {
-				phone.setOptionService(serviceName,  new C1Service(lineComponent[2]));
+				phone.setOptionService(serviceName, new C1Service(lineComponent[2]));
 				return phone;
 			}
 			c1Service.setAvailablePhoneNumber(lineComponent[2]);
@@ -87,7 +87,8 @@ public class ImportUtil {
 
 	}
 
-	private static Phone setCall(Phone phone, String[] lineComponent) {
+	private static Phone setCall(Phone phone, String callDayStr, String callTimeStr,
+			String callLengthStr, String targetPhoneNumber) {
 
 		if (phone == null) {
 			return null;
@@ -95,14 +96,14 @@ public class ImportUtil {
 
 		Date callDate;
 		try {
-			callDate = Constants.timeFormat.parse(lineComponent[1] + " " + lineComponent[2]);
+			callDate = Constants.timeFormat.parse(callDayStr + " " + callTimeStr);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return phone;
 		}
 
-		int callTime = Integer.parseInt(lineComponent[3]);
-		phone.addCall(new Call(callDate, callTime, lineComponent[4]));
+		int callTime = Integer.parseInt(callLengthStr);
+		phone.addCall(new Call(callDate, callTime, targetPhoneNumber));
 		return phone;
 	}
 }

@@ -3,12 +3,9 @@ package phone;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import constants.Constants;
 import service.BaseService;
-import service.C1Service;
-import service.E1Service;
 import service.OptionService;
 
 public class Phone {
@@ -25,20 +22,6 @@ public class Phone {
 		setPhoneNumber(phoneNumber);
 	}
 
-
-	public void setC1Service(String phoneNumber) {
-		C1Service c1Service = (C1Service) optionServiceList.get(Constants.SERVICE_NAME_C1);
-		if (c1Service == null) {
-			optionServiceList.put(Constants.SERVICE_NAME_C1, new C1Service(phoneNumber));
-			return;
-		}
-		c1Service.setAvailablePhoneNumber(phoneNumber);
-	}
-
-	public void setE1Service() {
-		optionServiceList.put(Constants.SERVICE_NAME_E1, new E1Service());
-	}
-
 	public void setOptionService(String serviceName, OptionService optionService){
 		optionServiceList.put(serviceName,optionService);
 	}
@@ -49,13 +32,6 @@ public class Phone {
 
 	public void addCall(Call call) {
 		callList.add(call);
-	}
-
-	private void culcMonthlyBasicFee() {
-		monthlyBasicFee = baseService.getBASIC_MONTHLY_CHARGE();
-		for (Map.Entry<String, OptionService> optionServiceEntry : optionServiceList.entrySet()) {
-			monthlyBasicFee = optionServiceEntry.getValue().changeMonthlyBasicFee(monthlyBasicFee);
-		}
 	}
 
 	private void culcMonthlyCallFee() {
@@ -84,13 +60,31 @@ public class Phone {
 		this.phoneNumber = phoneNumber;
 	}
 
+	public List<Call> getCallList() {
+		return callList;
+	}
+
+	public BaseService getBaseService() {
+		return baseService;
+	}
+
+	public HashMap<String, OptionService> getOptionServiceList() {
+		return optionServiceList;
+	}
+
+	public void setMonthlyBasicFee(int monthlyBasicFee) {
+		this.monthlyBasicFee = monthlyBasicFee;
+	}
+
+	public void setMonthlyCallFee(int monthlyCallFee) {
+		this.monthlyCallFee = monthlyCallFee;
+	}
+
 	public int getMonthlyBasicFee() {
-		culcMonthlyBasicFee();
 		return monthlyBasicFee;
 	}
 
 	public int getMonthlyCallFee() {
-		culcMonthlyCallFee();
 		return monthlyCallFee;
 	}
 }
