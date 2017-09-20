@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import constants.Constants;
 import service.BaseService;
 import service.OptionService;
 
@@ -32,24 +31,6 @@ public class Phone {
 
 	public void addCall(Call call) {
 		callList.add(call);
-	}
-
-	private void culcMonthlyCallFee() {
-		monthlyCallFee = 0;
-		for (Call call : callList) {
-			int callFeePerMinutes = baseService.getBASIC_CALL_CHARGE_PER_MINUTES();
-
-			if (optionServiceList.get(Constants.SERVICE_NAME_E1) != null) {
-				callFeePerMinutes = optionServiceList.get(Constants.SERVICE_NAME_E1)
-						.changeCallFeePerMinutes(callFeePerMinutes, call);
-			}
-
-			if (optionServiceList.get(Constants.SERVICE_NAME_C1) != null) {
-				callFeePerMinutes = optionServiceList.get(Constants.SERVICE_NAME_C1)
-						.changeCallFeePerMinutes(callFeePerMinutes, call);
-			}
-			monthlyCallFee = monthlyCallFee + (callFeePerMinutes * call.getCallTime());
-		}
 	}
 
 	public String getPhoneNumber() {
