@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,13 +49,16 @@ public class CalcMonthlyFee {
 
 	/**
 	 *@param phoneList 基本料金,通話料金の月額を求める携帯電話のリスト
-	 *@return 基本料金,通話料金の月額情報を含めた携帯電話のリスト
+	 *@return returnPhoneList 基本料金,通話料金の月額情報を含めた携帯電話のリスト
 	 */
 	private static List<Phone> setMonthlyFee(List<Phone> phoneList) {
 		List<Phone> returnPhoneList = new ArrayList<>();
 		for(Phone phone :phoneList){
-			phone.setMonthlyBasicFee(culcMonthlyBasicFee(phone));
-			phone.setMonthlyCallFee(culcMonthlyCallFee(phone));
+			int monthlyBasicFee = culcMonthlyBasicFee(phone.getBaseService().getBASIC_MONTHLY_CHARGE(), phone.getOptionServiceList());
+			phone.setMonthlyBasicFee(monthlyBasicFee);
+
+			int monthlyCallFee = culcMonthlyCallFee(phone.getBaseService().getBASIC_CALL_CHARGE_PER_MINUTES(), phone.getCallList(), phone.getOptionServiceList());
+			phone.setMonthlyCallFee(monthlyCallFee);
 			returnPhoneList.add(phone);
 		}
 		return returnPhoneList;
@@ -62,16 +66,17 @@ public class CalcMonthlyFee {
 
 
 	/**
-	 *@param phone 基本料金を求める携帯電話
-	 *@return 基本料金月額
+	 *@param baseMonthlyBasicFee 携帯電話の基本サービスの基本料金
+	 *@param optionServiceList 携帯電話が加入しているオプションサービスのHashMap
+	 *@return monthlyBasicFee 基本料金月額
 	 */
-	private static int culcMonthlyBasicFee(Phone phone) {
+	private static int culcMonthlyBasicFee(int baseMonthlyBasicFee, HashMap<String, OptionService> optionServiceList) {
 
 		//基本サービスの基本料金取得
-		int monthlyBasicFee = phone.getBaseService().getBASIC_MONTHLY_CHARGE();
+		int monthlyBasicFee = baseMonthlyBasicFee;
 
 		//オプションサービスごとの基本料金変動を反映
-		for (Map.Entry<String, OptionService> optionServiceEntry : phone.getOptionServiceList().entrySet()) {
+		for (Map.Entry<String, OptionService> optionServiceEntry : optionServiceList.entrySet()) {
 			monthlyBasicFee = optionServiceEntry.getValue().changeMonthlyBasicFee(monthlyBasicFee);
 		}
 		return monthlyBasicFee;
@@ -79,23 +84,25 @@ public class CalcMonthlyFee {
 
 
 	/**
-	 *@param phone 通話料金を求める携帯電話
+	 *@param basicCallChargePerMinutes 携帯電話の基本サービスの通話料/分
+	 *@param callList 携帯電話の通話のリスト
+	 *@param optionServiceList 携帯電話が加入しているオプションサービスのHashMap
 	 *@return 通話料金月額
 	 */
-	private static int culcMonthlyCallFee(Phone phone) {
+	private static int culcMonthlyCallFee(int basicCallChargePerMinutes, List<Call> callList, HashMap<String, OptionService> optionServiceList) {
 		int monthlyCallFee = 0;
 
 		//通話ごとに通話料計算
-		for (Call call : phone.getCallList()) {
-			int callFeePerMinutes = phone.getBaseService().getBASIC_CALL_CHARGE_PER_MINUTES();
+		for (Call call : callList) {
+			int callFeePerMinutes = basicCallChargePerMinutes;
 
-			if (phone.getOptionService(Constants.SERVICE_NAME_E1) != null) {
-				callFeePerMinutes = phone.getOptionService(Constants.SERVICE_NAME_E1)
+			if (optionServiceList.get(Constants.SERVICE_NAME_E1) != null) {
+				callFeePerMinutes = optionServiceList.get(Constants.SERVICE_NAME_E1)
 						.changeCallFeePerMinutes(callFeePerMinutes, call);
 			}
 
-			if (phone.getOptionService(Constants.SERVICE_NAME_C1) != null) {
-				callFeePerMinutes = phone.getOptionService(Constants.SERVICE_NAME_C1)
+			if (optionServiceList.get(Constants.SERVICE_NAME_C1) != null) {
+				callFeePerMinutes = optionServiceList.get(Constants.SERVICE_NAME_C1)
 						.changeCallFeePerMinutes(callFeePerMinutes, call);
 			}
 
