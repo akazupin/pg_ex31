@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import service.BaseService;
-
 public class Phone_Test {
 
 	@Test
@@ -13,6 +11,5 @@ public class Phone_Test {
 		Phone phone = new Phone("090-1111-1111");
 		assertEquals("090-1111-1111" , phone.getPhoneNumber());
 
-		BaseService testBaseService = new BaseService();
 	}
 }

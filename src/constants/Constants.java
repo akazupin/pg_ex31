@@ -30,6 +30,9 @@ public class Constants {
 	public static final SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy/MM/dd");
 	public static final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
+	public static final int BASIC_MONTHLY_CHARGE = 1000;
+	public static final int BASIC_CALL_CHARGE_PER_MINUTES = 20;
+
 	// オプションサービス名
 	public static final String SERVICE_NAME_C1 = "C1";
 	public static final String SERVICE_NAME_E1 = "E1";

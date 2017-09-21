@@ -10,6 +10,10 @@ public class C1Service extends OptionService {
 
 	List<String> availablePhoneNumbers = new ArrayList<>();
 
+	public List<String> getAvailablePhoneNumbers() {
+		return availablePhoneNumbers;
+	}
+
 	public C1Service(String phoneNumber) {
 		availablePhoneNumbers.add(phoneNumber);
 	}
